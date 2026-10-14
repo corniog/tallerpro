@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>TallerPro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<style>
+:root{--ac:#f97316;--ac2:#fb923c;--nav:#0f172a;--nav2:#1e293b;--bg:#f1f5f9;--card:#fff;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--ok:#16a34a;--warn:#d97706;--bad:#dc2626;--r:14px;--sh:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.05)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.hide{display:none!important}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- Login / setup ---------- */
+.gate{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:radial-gradient(1200px 600px at 10% -10%,#1e3a8a55,transparent),radial-gradient(900px 500px at 100% 110%,color-mix(in srgb,var(--ac) 35%,transparent),transparent),var(--nav);z-index:90}
+.gate .box{width:100%;max-width:380px;background:#ffffff0d;border:1px solid #ffffff22;backdrop-filter:blur(14px);border-radius:22px;padding:30px 26px;color:#fff;text-align:center}
+.gate .logo{width:72px;height:72px;border-radius:20px;margin:0 auto 14px;background:linear-gradient(135deg,var(--ac),#ea580c);display:grid;place-items:center;box-shadow:0 10px 30px #f9731655;overflow:hidden}
+.gate .logo img{width:100%;height:100%;object-fit:contain;background:#fff}
+.gate h1{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.gate p{color:#cbd5e1;margin:6px 0 20px;font-size:13px}
+.gate input{width:100%;padding:14px;border-radius:12px;border:1px solid #ffffff33;background:#ffffff14;color:#fff;font-size:20px;text-align:center;letter-spacing:.4em;outline:none}
+.gate input.txt{letter-spacing:0;font-size:14px;text-align:left}
+.gate input:focus{border-color:var(--ac)}
+.gate .err{color:#fca5a5;font-size:13px;min-height:18px;margin-top:10px}
+.gate .btn{width:100%;margin-top:12px}
+
+/* ---------- Shell ---------- */
+#app{display:flex;height:100%}
+aside{width:264px;background:linear-gradient(180deg,var(--nav),#0b1220);color:#cbd5e1;display:flex;flex-direction:column;transition:width .25s ease;flex:none;z-index:30}
+aside.col{width:76px}
+.brand{display:flex;align-items:center;gap:10px;padding:16px 14px;height:68px}
+.brand .lg{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--ac),#ea580c);display:grid;place-items:center;flex:none;overflow:hidden;color:#fff}
+.brand .lg img{width:100%;height:100%;object-fit:contain;background:#fff}
+.brand .nm{font-weight:800;color:#fff;line-height:1.1;overflow:hidden;white-space:nowrap;flex:1;min-width:0}
+.brand .nm small{display:block;font-weight:500;color:#94a3b8;font-size:11px;margin-top:2px;text-overflow:ellipsis;overflow:hidden}
+.dots{width:34px;height:34px;border-radius:10px;color:#94a3b8;display:grid;place-items:center;flex:none}
+.dots:hover{background:#ffffff14;color:#fff}
+aside.col .nm{display:none}
+aside.col .brand{flex-direction:column;height:auto;gap:8px;padding:14px 0}
+nav{flex:1;padding:8px 12px;overflow:auto}
+.nv{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border-radius:12px;color:#cbd5e1;font-weight:600;margin-bottom:4px;white-space:nowrap;position:relative}
+.nv:hover{background:#ffffff0f;color:#fff}
+.nv.on{background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 90%,#000),var(--ac2));color:#fff;box-shadow:0 6px 18px color-mix(in srgb,var(--ac) 40%,transparent)}
+.nv .bd{margin-left:auto;background:#ef4444;color:#fff;border-radius:99px;font-size:11px;padding:1px 7px}
+aside.col .nv{justify-content:center;padding:12px 0}
+aside.col .nv span,aside.col .nv .bd{display:none}
+.nsec{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#64748b;padding:14px 12px 6px;font-weight:700}
+aside.col .nsec{visibility:hidden;height:8px;padding:0}
+.foot{padding:12px;border-top:1px solid #ffffff14;font-size:12px;color:#94a3b8}
+aside.col .foot{display:none}
+.plan{display:inline-block;background:#ffffff14;color:#fff;border-radius:99px;padding:2px 9px;font-size:11px;font-weight:700}
+
+main{flex:1;min-width:0;display:flex;flex-direction:column}
+header.top{height:68px;display:flex;align-items:center;gap:12px;padding:0 24px;background:var(--card);border-bottom:1px solid var(--bd);flex:none}
+header.top h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
+header.top .sub{color:var(--mu);font-size:12px}
+.burger{display:none;width:40px;height:40px;border-radius:10px;place-items:center}
+.sp{flex:1}
+#view{flex:1;overflow:auto;padding:22px 24px 40px}
+.wrap{max-width:1240px;margin:0 auto}
+.bnav{display:none}
+
+/* ---------- UI atoms ---------- */
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:18px}
+.card h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g21{grid-template-columns:2fr 1fr}.g12{grid-template-columns:1fr 1.3fr}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:11px;font-weight:700;background:var(--ac);color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--ac) 30%,transparent);transition:.15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn:active{transform:none}
+.btn.sec{background:#fff;color:var(--tx);border:1px solid var(--bd);box-shadow:none}
+.btn.sec:hover{background:#f8fafc}
+.btn.dk{background:var(--nav);box-shadow:none}
+.btn.wa{background:#25d366;box-shadow:0 4px 14px #25d36644}
+.btn.bad{background:#fff;color:var(--bad);border:1px solid #fecaca;box-shadow:none}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:9px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.ib{width:34px;height:34px;border-radius:9px;display:inline-grid;place-items:center;color:var(--mu)}
+.ib:hover{background:#f1f5f9;color:var(--tx)}
+label.f{display:block;font-size:12px;font-weight:600;color:var(--mu);margin-bottom:5px}
+.in{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:#fff;outline:none;transition:.15s}
+.in:focus{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent)}
+textarea.in{resize:vertical;min-height:70px}
+.fg{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+.fg .full{grid-column:1/-1}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.tag.ok{background:#dcfce7;color:#166534}.tag.wn{background:#fef3c7;color:#92400e}.tag.ac{background:color-mix(in srgb,var(--ac) 16%,#fff);color:color-mix(in srgb,var(--ac) 70%,#000)}.tag.gr{background:#e2e8f0;color:#334155}
+.mu{color:var(--mu)}.b{font-weight:700}.r{text-align:right}
+.plate{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border:3px solid #111;border-radius:9px;padding:3px 14px;font-weight:800;letter-spacing:.14em;font-size:20px;font-family:'Courier New',monospace;box-shadow:inset 0 0 0 2px #e5e7eb}
+.plate.sm{font-size:13px;padding:1px 9px;border-width:2px;letter-spacing:.1em}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);padding:8px 10px;border-bottom:1px solid var(--bd)}
+td{padding:11px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr.click:hover{background:#f8fafc;cursor:pointer}
+.tabs{display:flex;gap:6px;background:#e2e8f0;padding:5px;border-radius:13px;width:fit-content;max-width:100%;overflow:auto}
+.tabs button{padding:9px 18px;border-radius:9px;font-weight:700;color:var(--mu);display:flex;gap:8px;align-items:center;white-space:nowrap}
+.tabs button.on{background:#fff;color:var(--tx);box-shadow:var(--sh)}
+.empty{text-align:center;color:var(--mu);padding:40px 16px}
+.empty svg{width:42px;height:42px;opacity:.4;margin-bottom:8px}
+.kpi{display:flex;gap:14px;align-items:center}
+.kpi .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff}
+.kpi .v{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.kpi .l{color:var(--mu);font-size:12px;font-weight:600}
+.kpi .d{font-size:11px;margin-top:2px}
+.tl{position:relative;padding-left:26px}
+.tl:before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--bd)}
+.tli{position:relative;margin-bottom:16px}
+.tli:before{content:'';position:absolute;left:-23px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--ac);border:3px solid #fff;box-shadow:0 0 0 2px var(--ac)}
+.prog{height:9px;background:#e2e8f0;border-radius:9px;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:9px;transition:width .4s}
+.hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:linear-gradient(120deg,var(--nav),#1e293b);color:#fff;border:0}
+.hero .mu{color:#94a3b8}
+.chip{padding:6px 12px;border-radius:99px;background:#f1f5f9;border:1px solid var(--bd);font-weight:600;font-size:12px}
+.chip:hover{border-color:var(--ac);color:var(--ac)}
+.row-item{display:grid;grid-template-columns:1fr 70px 110px 34px;gap:8px;margin-bottom:8px;align-items:center}
+.benefit{border:2px dashed var(--ac);background:color-mix(in srgb,var(--ac) 8%,#fff);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.sugg{position:absolute;left:0;right:0;top:100%;background:#fff;border:1px solid var(--bd);border-radius:12px;box-shadow:0 12px 30px #0f172a22;z-index:20;max-height:300px;overflow:auto;margin-top:6px}
+.sugg div{padding:10px 14px;display:flex;gap:10px;align-items:center;cursor:pointer;border-bottom:1px solid #f1f5f9}
+.sugg div:hover{background:#f8fafc}
+.paper{background:#fff;border:1px solid var(--bd);border-radius:6px;box-shadow:0 10px 30px #0f172a1a;padding:26px;max-width:560px;margin:0 auto;font-size:13px}
+.paper h4{font-size:16px}
+.paper table td,.paper table th{padding:6px 4px}
+.tot{display:flex;justify-content:space-between;padding:4px 0}
+.tot.big{font-size:18px;font-weight:800;border-top:2px solid var(--tx);margin-top:6px;padding-top:8px}
+
+/* ---------- Modal / toast ---------- */
+.ov{position:fixed;inset:0;background:#0f172a99;backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px;z-index:70;animation:fi .15s}
+.md{background:#fff;border-radius:18px;width:100%;max-width:520px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px #0f172a55}
+.md.lg{max-width:720px}
+.md .hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;position:sticky;top:0;background:#fff;z-index:2}
+.md .bd2{padding:20px}
+.md .ft{padding:14px 20px;border-top:1px solid var(--bd);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+@keyframes fi{from{opacity:0}}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:99;align-items:center}
+.ts{background:var(--nav);color:#fff;padding:11px 18px;border-radius:12px;font-weight:600;box-shadow:0 10px 30px #0f172a55;animation:up .25s;max-width:92vw}
+.ts.er{background:#b91c1c}.ts.ok{background:#15803d}
+@keyframes up{from{opacity:0;transform:translateY(10px)}}
+.scan{position:relative;background:#000;border-radius:14px;overflow:hidden;aspect-ratio:1}
+.scan video{width:100%;height:100%;object-fit:cover}
+.scan:after{content:'';position:absolute;inset:18%;border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 999px #0006;animation:pl 1.6s infinite}
+@keyframes pl{50%{border-color:var(--ac)}}
+.load{position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--ac),transparent);background-size:50% 100%;animation:ld 1s infinite linear;z-index:100}
+@keyframes ld{from{background-position:-100% 0}to{background-position:200% 0}}
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:10px}
+.bars .bc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;min-width:0}
+.bars .bb{width:100%;max-width:46px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--ac2),var(--ac));min-height:3px;transition:height .5s}
+.bars .bv{font-size:10px;font-weight:700;color:var(--mu)}.bars .bl{font-size:11px;color:var(--mu);text-transform:capitalize}
+.hb{margin-bottom:10px}.hb .t{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;font-weight:600}
+.sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw button{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--bd)}
+.sw button.on{box-shadow:0 0 0 3px var(--tx)}
+
+@media(max-width:900px){
+ .g4{grid-template-columns:repeat(2,1fr)}.g3,.g21,.g12{grid-template-columns:1fr}
+ aside{position:fixed;inset:0 auto 0 0;transform:translateX(-100%);transition:transform .25s;width:280px!important;box-shadow:10px 0 40px #0008}
+ aside.open{transform:none}
+ aside.col .nm{display:block}aside.col .nv span{display:inline}aside.col .nsec{visibility:visible;height:auto;padding:14px 12px 6px}aside.col .brand{flex-direction:row;padding:16px 14px}
+ .burger{display:grid}
+ header.top{padding:0 14px;height:60px}
+ #view{padding:14px 14px 96px}
+ .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:25}
+ .bnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;color:var(--mu);padding:5px 0;border-radius:10px}
+ .bnav button.on{color:var(--ac)}
+ .bnav .scanb{margin-top:-24px}
+ .bnav .scanb i{width:54px;height:54px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px color-mix(in srgb,var(--ac) 50%,transparent);border:4px solid #fff}
+ .fg{grid-template-columns:1fr}
+ .row-item{grid-template-columns:1fr 56px 90px 30px}
+ .md{border-radius:18px 18px 0 0;max-height:94vh}.ov{align-items:end;padding:0}
+ #toast{bottom:100px}
+ .hide-m,.top .sub{display:none!important}
+}
+@media print{body{overflow:visible}aside,header,.bnav,.noprint{display:none!important}}
+</style>
+</head>
+<body>
+<div id="load" class="load hide"></div>
+<div id="toast"></div>
+<div id="gate" class="gate"></div>
+<div id="app" class="hide">
+  <aside id="side">
+    <div class="brand">
+      <div class="lg" id="bLogo"></div>
+      <div class="nm"><span id="bName">TallerPro</span><small>Gestión de taller</small></div>
+      <button class="dots" onclick="toggleSide()" title="Menú"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+    </div>
+    <nav id="nav"></nav>
+    <div class="foot"><div>Plan <span class="plan" id="plan">Gratis</span></div><button class="mu" style="margin-top:8px;font-size:12px" onclick="logout()">Cerrar sesión</button></div>
+  </aside>
+  <main>
+    <header class="top">
+      <button class="burger" onclick="openDrawer()"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div><h2 id="ttl">Panel</h2><div class="sub" id="sub"></div></div>
+      <div class="sp"></div>
+      <button class="btn sec sm hide-m" onclick="sync()"><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>Sincronizar</button>
+      <button class="btn" onclick="openScan()"><svg class="i" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></svg><span class="hide-m">Escanear QR</span></button>
+    </header>
+    <div id="view"></div>
+  </main>
+  <div class="bnav" id="bnav"></div>
+</div>
+<div id="modals"></div>
+
+<script>
+/* =====================================================================
+   CAPA DE API  — funciona dentro de Apps Script (google.script.run)
+   o instalada como PWA (fetch al Web App)
+   ===================================================================== */
+const INIT_V = '__INIT_V__';
+const IN_GAS = !!(window.google && google.script && google.script.run);
+let PIN = '', SCRIPT_URL = lsGet('tp_url') || (window.TP_URL || '');
+function lsGet(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}
+function lsSet(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}
+function ssGet(k){try{return sessionStorage.getItem(k)||''}catch(e){return ''}}
+function ssSet(k,v){try{v?sessionStorage.setItem(k,v):sessionStorage.removeItem(k)}catch(e){}}
+
+function call(action, payload){
+  return new Promise(function(res){
+    if(IN_GAS){
+      google.script.run.withSuccessHandler(res).withFailureHandler(function(e){res({ok:false,error:e&&e.message||'Error'})}).api(action,payload||{},PIN);
+    }else{
+      if(!SCRIPT_URL) return res({ok:false,error:'Falta la URL del Web App'});
+      fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:action,payload:payload||{},pin:PIN})})
+        .then(function(r){return r.json()}).then(res)
+        .catch(function(){res({ok:false,error:'Sin conexión con el servidor'})});
+    }
+  });
+}
+let busy=0;
+async function run(action,payload,okMsg){
+  busy++;document.getElementById('load').classList.remove('hide');
+  const r=await call(action,payload);
+  if(--busy<=0)document.getElementById('load').classList.add('hide');
+  if(!r.ok){
+    if(r.code==='AUTH'){logout(true)}
+    toast(r.error||'Error','er');return null;
+  }
+  if(r.data){D=r.data;cacheData();applyTheme();}
+  if(okMsg)toast(okMsg,'ok');
+  return r;
+}
+
+/* =====================================================================
+   ESTADO Y UTILIDADES
+   ===================================================================== */
+let D={config:{},vehiculos:[],historial:[],mecanicos:[],fidelidad:[],appUrl:''};
+let S={view:'dash',plate:'',tab:'info',cart:[{d:'',c:1,p:0}],mec:'',km:'',fecha:'',notas:'',pagada:false,benef:true,
+       fPlate:'',fSel:{},vq:'',hq:'',cfgTab:'taller',rules:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cfg=()=>D.config||{};
+const money=n=>(cfg().Moneda||'$')+Math.round(n||0).toLocaleString('es-CL');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fdate=s=>{if(!s)return '—';const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s);if(!m)return s;const ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return +m[3]+' '+ms[+m[2]-1]+' '+m[1]};
+const normP=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const veh=p=>D.vehiculos.find(v=>v.patente===p);
+const hist=p=>D.historial.filter(h=>h.patente===p).sort((a,b)=>(b.fecha+b.id).localeCompare(a.fecha+a.id));
+const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+
+const IC={
+ dash:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z"/>',
+ car:'<path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1h10a2 2 0 0 1 2 1l2 6v5h-3v-2H6v2H3zM7 13h.01M17 13h.01"/>',
+ wrench:'<path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-4-4 8-8zM3 21l4-4"/><path d="M14.7 6.3 18 3l3 3-3.3 3.3"/>',
+ inv:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2zM9 7h6M9 11h6M9 15h4"/>',
+ gift:'<path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/>',
+ cog:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
+ edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+ qr:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM20 14v3M14 20h3M20 20v1"/>',
+ dl:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+ print:'<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/>',
+ wa:'<path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 10c0 3 3 6 6 6l1.5-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ money:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',
+ alert:'<path d="M12 3 2 20h20zM12 10v4M12 17h.01"/>',
+ check:'<path d="m5 12 5 5 9-10"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>',
+ phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+ share:'<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 11 7.6-3.8M8.2 13l7.6 3.8"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>'
+};
+const ico=(n,s)=>'<svg class="i" viewBox="0 0 24 24"'+(s?' style="width:'+s+'px;height:'+s+'px"':'')+'>'+IC[n]+'</svg>';
+
+function toast(m,t){const e=document.createElement('div');e.className='ts '+(t||'');e.textContent=m;$('toast').appendChild(e);setTimeout(()=>e.remove(),3600)}
+function cacheData(){try{localStorage.setItem('tp_cache',JSON.stringify(D))}catch(e){}}
+function applyTheme(){
+  const c=cfg().Color||'#f97316';
+  document.documentElement.style.setProperty('--ac',c);
+  document.documentElement.style.setProperty('--ac2','color-mix(in srgb,'+c+' 70%,#fff)');
+  const n=cfg().Nombre_Taller||'TallerPro';
+  $('bName').textContent=n;
+  $('bLogo').innerHTML=cfg().Logo?'<img src="'+esc(cfg().Logo)+'" alt="">':ico('wrench',22);
+  $('plan').textContent=cfg().Plan||'Gratis';
+  document.title=n;
+}
+
+/* ---------------- Modal ---------------- */
+function modal(title,body,foot,cls){
+  closeModal();
+  const d=document.createElement('div');d.className='ov';d.id='ov';
+  d.onclick=e=>{if(e.target===d)closeModal()};
+  d.innerHTML='<div class="md '+(cls||'')+'"><div class="hd"><span style="flex:1">'+title+'</span><button class="ib" onclick="closeModal()">'+ico('x')+'</button></div><div class="bd2">'+body+'</div>'+(foot?'<div class="ft">'+foot+'</div>':'')+'</div>';
+  $('modals').appendChild(d);
+}
+function closeModal(){stopScan();const o=$('ov');if(o)o.remove()}
+function confirmBox(msg,fn,btn){
+  window._cf=fn;
+  modal('Confirmar','<p>'+msg+'</p>','<button class="btn sec" onclick="closeModal()">Cancelar</button><button class="btn dk" style="background:var(--bad)" onclick="closeModal();_cf()">'+(btn||'Eliminar')+'</button>');
+}
+
+/* =====================================================================
+   ARRANQUE / LOGIN
+   ===================================================================== */
+function gate(html){$('gate').innerHTML='<div class="box">'+html+'</div>';$('gate').classList.remove('hide');$('app').classList.add('hide')}
+function showLogin(){
+  let cachedLogo='';try{const c=JSON.parse(localStorage.getItem('tp_cache')||'{}');if(c.config){D=c;applyTheme();cachedLogo=c.config.Logo}}catch(e){}
+  gate('<div class="logo">'+(cachedLogo?'<img src="'+esc(cachedLogo)+'">':ico('wrench',34))+'</div><h1>'+esc(cfg().Nombre_Taller||'TallerPro')+'</h1><p>Ingresa tu PIN para continuar</p>'
+   +'<input id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" placeholder="••••" onkeydown="if(event.key===\'Enter\')doLogin()"><div class="err" id="gerr"></div>'
+   +'<button class="btn" onclick="doLogin()">Entrar</button>'
+   +(IN_GAS?'':'<button class="mu" style="margin-top:14px;font-size:12px" onclick="resetUrl()">Cambiar conexión</button>'));
+  setTimeout(()=>{const p=$('pin');p&&p.focus()},50);
+}
+function showSetup(){
+  gate('<div class="logo">'+ico('wrench',34)+'</div><h1>Conectar con tu Sheet</h1><p>Pega la URL del Web App de Apps Script (termina en <b>/exec</b>)</p>'
+   +'<input class="txt" id="surl" placeholder="https://script.google.com/macros/s/…/exec"><div class="err" id="gerr"></div><button class="btn" onclick="saveUrl()">Guardar y continuar</button>');
+}
+function saveUrl(){const u=$('surl').value.trim();if(!/^https:\/\/script\.google(usercontent)?\.com\/.+/.test(u)){$('gerr').textContent='La URL no parece válida';return}SCRIPT_URL=u;lsSet('tp_url',u);showLogin()}
+function resetUrl(){lsSet('tp_url','');SCRIPT_URL='';showSetup()}
+async function doLogin(){
+  const p=$('pin').value;if(!p)return;PIN=p;$('gerr').textContent='Verificando…';
+  const r=await call('login');
+  if(!r.ok){PIN='';$('gerr').textContent=r.error||'Error';return}
+  D=r.data;cacheData();ssSet('tp_pin',p);start();
+}
+function logout(forced){PIN='';ssSet('tp_pin','');if(forced)toast('Sesión expirada','er');showLogin()}
+function start(){
+  $('gate').classList.add('hide');$('app').classList.remove('hide');applyTheme();buildNav();
+  let go=null;
+  if(INIT_V&&INIT_V.indexOf('__')!==0)go=INIT_V;
+  else{const q=new URLSearchParams(location.search).get('v');if(q)go=q}
+  if(go){resolveScan(go,true);try{history.replaceState(null,'',location.pathname)}catch(e){}}
+  else nav('dash');
+}
+async function sync(){const r=await run('bootstrap',{},'Datos actualizados');if(r)render()}
+(function init(){
+  if(!IN_GAS&&'serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+  if(!IN_GAS&&!SCRIPT_URL){showSetup();return}
+  const p=ssGet('tp_pin');
+  if(p){PIN=p;call('login').then(r=>{if(r.ok){D=r.data;cacheData();start()}else{PIN='';showLogin()}})}
+  else showLogin();
+})();
+
+/* =====================================================================
+   NAVEGACIÓN
+   ===================================================================== */
+const MODS=[
+ {k:'dash',n:'Panel KPI',i:'dash',t:'Panel de control'},
+ {k:'atender',n:'Atención',i:'wrench',t:'Atención del vehículo'},
+ {k:'vehiculos',n:'Vehículos',i:'car',t:'Vehículos y clientes'},
+ {k:'factura',n:'Facturación',i:'inv',t:'Facturación y boletas'},
+ {k:'fidelidad',n:'Fidelidad',i:'gift',t:'Programa de fidelidad'},
+ {k:'config',n:'Configuración',i:'cog',t:'Configuración del taller'}
+];
+function buildNav(){
+  let h='<div class="nsec">Operación</div>';
+  MODS.forEach((m,i)=>{if(i===4)h+='<div class="nsec">Gestión</div>';h+='<button class="nv" data-k="'+m.k+'" onclick="nav(\''+m.k+'\')">'+ico(m.i)+'<span>'+m.n+'</span></button>'});
+  $('nav').innerHTML=h;
+  const b=[['dash','Panel','dash'],['vehiculos','Vehículos','car'],['scan','Escanear','scan'],['factura','Boletas','inv'],['config','Ajustes','cog']];
+  $('bnav').innerHTML=b.map(x=>x[0]==='scan'?'<button class="scanb" onclick="openScan()"><i>'+ico('scan',26)+'</i></button>':'<button data-k="'+x[0]+'" onclick="nav(\''+x[0]+'\')">'+ico(x[2])+x[1]+'</button>').join('');
+}
+function nav(k){
+  S.view=k;closeDrawer();
+  document.querySelectorAll('[data-k]').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  render();$('view').scrollTop=0;
+}
+function toggleSide(){if(innerWidth<=900)return closeDrawer();$('side').classList.toggle('col');lsSet('tp_col',$('side').classList.contains('col')?'1':'')}
+function openDrawer(){$('side').classList.add('open')}
+function closeDrawer(){$('side').classList.remove('open')}
+if(lsGet('tp_col'))document.addEventListener('DOMContentLoaded',()=>$('side').classList.add('col'));
+
+function render(){
+  const m=MODS.find(x=>x.k===S.view)||MODS[0];
+  $('ttl').textContent=m.t;
+  const pend=D.historial.filter(h=>h.estado!=='Pagada').length;
+  $('sub').textContent=new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'})+(pend?' · '+pend+' pendientes de cobro':'');
+  const f={dash:vDash,atender:vAtender,vehiculos:vVehiculos,factura:vFactura,fidelidad:vFidelidad,config:vConfig}[S.view];
+  $('view').innerHTML='<div class="wrap">'+f()+'</div>';
+  const a=document.querySelector('[data-k="factura"] .bd');if(a)a.remove();
+  if(pend){const n=document.querySelector('aside [data-k="factura"]');if(n)n.insertAdjacentHTML('beforeend','<em class="bd" style="font-style:normal">'+pend+'</em>')}
+  if(S.view==='atender')updTotals();
+}
+
+/* =====================================================================
+   FIDELIDAD (helpers)
+   ===================================================================== */
+function nextBenefit(visitas){
+  // Próximo beneficio según contador actual
+  let best=null;
+  (D.fidelidad||[]).filter(r=>r.activo&&r.cada>0).forEach(r=>{
+    const falta=r.cada-(visitas%r.cada);
+    const v=visitas+falta;
+    if(!best||falta<best.falta)best={falta:falta,visita:v,regla:r,cada:r.cada};
+  });
+  return best;
+}
+function benefitFor(visita,items,subtotal){
+  let best=null;
+  (D.fidelidad||[]).forEach(r=>{
+    if(!r.activo||!(r.cada>0)||visita%r.cada!==0)return;
+    let ah=r.tipo==='GRATIS'?(items[0]?items[0].c*items[0].p:0):subtotal*Math.min(100,r.valor)/100;
+    ah=Math.round(ah);
+    if(!best||ah>best.ahorro)best={ahorro:ah,texto:r.desc||(r.tipo==='GRATIS'?'Mantenimiento gratis':r.valor+'% de descuento'),regla:r};
+  });
+  return best;
+}
+
+/* =====================================================================
+   PANEL KPI
+   ===================================================================== */
+function vDash(){
+  const H=D.historial,now=new Date(),ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const mes=H.filter(h=>h.fecha.slice(0,7)===ym);
+  const ingMes=mes.reduce((a,h)=>a+h.total,0);
+  const cobrado=H.filter(h=>h.estado==='Pagada').reduce((a,h)=>a+h.total,0);
+  const pend=H.filter(h=>h.estado!=='Pagada');
+  const pendTot=pend.reduce((a,h)=>a+h.total,0);
+  const desc=H.reduce((a,h)=>a+h.descuento,0);
+  const ticket=H.length?H.reduce((a,h)=>a+h.total,0)/H.length:0;
+  // últimos 6 meses
+  const ms=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);ms.push({k:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),l:d.toLocaleDateString('es-CL',{month:'short'}),v:0})}
+  H.forEach(h=>{const m=ms.find(x=>x.k===h.fecha.slice(0,7));if(m)m.v+=h.total});
+  const mx=Math.max(1,...ms.map(m=>m.v));
+  const byMec={};H.forEach(h=>{byMec[h.mecanico]=(byMec[h.mecanico]||0)+1});
+  const mecs=Object.entries(byMec).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const mm=Math.max(1,...mecs.map(x=>x[1]));
+  const byJob={};H.forEach(h=>h.items.forEach(i=>{const k=i.d.toLowerCase();byJob[k]=(byJob[k]||0)+i.c}));
+  const jobs=Object.entries(byJob).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const jm=Math.max(1,...jobs.map(x=>x[1]));
+  const near=D.vehiculos.map(v=>({v:v,nb:nextBenefit(v.visitas)})).filter(x=>x.nb&&x.nb.falta===1).slice(0,5);
+  const kp=(c,ic,v,l,d)=>'<div class="card kpi"><div class="ic" style="background:'+c+'">'+ico(ic,22)+'</div><div><div class="v">'+v+'</div><div class="l">'+l+'</div>'+(d?'<div class="d mu">'+d+'</div>':'')+'</div></div>';
+  return '<div class="grid g4" style="margin-bottom:16px">'
+   +kp('linear-gradient(135deg,#f97316,#ea580c)','money',money(ingMes),'Ingresos del mes',mes.length+' servicios')
+   +kp('linear-gradient(135deg,#16a34a,#15803d)','check',money(cobrado),'Total cobrado','')
+   +kp('linear-gradient(135deg,#d97706,#b45309)','alert',money(pendTot),'Por cobrar',pend.length+' boletas pendientes')
+   +kp('linear-gradient(135deg,#2563eb,#1d4ed8)','car',D.vehiculos.length,'Vehículos registrados','Ticket prom. '+money(ticket))
+   +'</div><div class="grid g21" style="margin-bottom:16px"><div class="card"><h3>Ingresos · últimos 6 meses</h3><div class="bars">'
+   +ms.map(m=>'<div class="bc"><span class="bv">'+(m.v?money(m.v):'')+'</span><div class="bb" style="height:'+Math.max(2,m.v/mx*120)+'px"></div><span class="bl">'+m.l+'</span></div>').join('')
+   +'</div></div><div class="card"><h3>Atenciones por técnico</h3>'
+   +(mecs.length?mecs.map(x=>'<div class="hb"><div class="t"><span>'+esc(x[0])+'</span><span>'+x[1]+'</span></div><div class="prog"><i style="width:'+x[1]/mm*100+'%"></i></div></div>').join(''):'<div class="empty">Sin datos todavía</div>')
+   +'</div></div><div class="grid g3"><div class="card"><h3>Trabajos más frecuentes</h3>'
+   +(jobs.length?jobs.map(x=>'<div class="hb"><div class="t"><span>'+esc(x[0].charAt(0).toUpperCase()+x[0].slice(1))+'</span><span>'+x[1]+'</span></div><div class="prog"><i style="width:'+x[1]/jm*100+'%"></i></div></div>').join(''):'<div class="empty">Sin datos todavía</div>')
+   +'</div><div class="card"><h3>Últimas atenciones<span class="sp"></span><button class="btn sm sec" onclick="nav(\'factura\')">Ver todo</button></h3>'
+   +(H.length?H.slice().sort((a,b)=>(b.fecha+b.id).localeCompare(a.fecha+a.id)).slice(0,5).map(h=>'<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9"><span class="plate sm">'+esc(h.patente)+'</span><div style="flex:1;min-width:0"><div class="b" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(h.detalle)+'</div><div class="mu" style="font-size:11px">'+fdate(h.fecha)+' · '+esc(h.mecanico)+'</div></div><span class="b">'+money(h.total)+'</span></div>').join(''):'<div class="empty">Aún no hay atenciones.<br>Escanea un QR para comenzar.</div>')
+   +'</div><div class="card"><h3>'+ico('gift',18)+' Próximos beneficios</h3>'
+   +(near.length?near.map(x=>'<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9"><span class="plate sm">'+esc(x.v.patente)+'</span><div style="flex:1"><div class="b">'+esc(x.v.cliente)+'</div><div class="mu" style="font-size:11px">Su visita N° '+x.nb.visita+': '+esc(x.nb.regla.desc||'beneficio')+'</div></div></div>').join(''):'<div class="empty" style="padding:20px">Ningún cliente está a una visita de su beneficio.</div>')
+   +'</div></div><p class="mu" style="margin-top:16px;font-size:12px">Descuentos otorgados por fidelidad: <b>'+money(desc)+'</b></p>';
+}
+
+/* =====================================================================
+   VEHÍCULOS
+   ===================================================================== */
+function vVehiculos(){
+  const q=S.vq.toLowerCase();
+  const L=D.vehiculos.filter(v=>!q||(v.patente+' '+v.cliente+' '+v.marca+' '+v.modelo+' '+v.telefono).toLowerCase().includes(q));
+  return '<div class="card"><h3 style="flex-wrap:wrap"><span style="flex:1;min-width:140px">Vehículos ('+D.vehiculos.length+')</span>'
+   +'<div style="position:relative;flex:1;min-width:180px;max-width:320px"><input class="in" id="vq" placeholder="Buscar patente, cliente…" value="'+esc(S.vq)+'" oninput="S.vq=this.value;qv()"></div>'
+   +'<button class="btn" onclick="editVeh()">'+ico('plus')+'Nuevo vehículo</button></h3><div id="vlist">'+vList(L)+'</div></div>';
+}
+function qv(){const q=S.vq.toLowerCase();$('vlist').innerHTML=vList(D.vehiculos.filter(v=>!q||(v.patente+' '+v.cliente+' '+v.marca+' '+v.modelo+' '+v.telefono).toLowerCase().includes(q)))}
+function vList(L){
+  if(!L.length)return '<div class="empty">'+ico('car',42)+'<div>No hay vehículos'+(S.vq?' que coincidan':' registrados aún')+'</div></div>';
+  return '<div style="overflow:auto"><table><thead><tr><th>Patente</th><th>Cliente</th><th class="hide-m">Vehículo</th><th class="hide-m">Contacto</th><th>Visitas</th><th></th></tr></thead><tbody>'
+   +L.map(v=>'<tr class="click" onclick="atender(\''+v.patente+'\')"><td><span class="plate sm">'+esc(v.patente)+'</span></td><td><div class="b">'+esc(v.cliente)+'</div></td><td class="hide-m">'+esc([v.marca,v.modelo,v.anio].filter(Boolean).join(' ')||'—')+'</td><td class="hide-m mu">'+esc(v.telefono||'—')+'</td><td><span class="tag ac">'+v.visitas+'</span></td>'
+   +'<td class="r" onclick="event.stopPropagation()" style="white-space:nowrap"><button class="ib" title="QR" onclick="showQR(\''+v.patente+'\')">'+ico('qr')+'</button><button class="ib" title="Editar" onclick="editVeh(\''+v.patente+'\')">'+ico('edit')+'</button><button class="ib" title="Eliminar" onclick="delVeh(\''+v.patente+'\')">'+ico('trash')+'</button></td></tr>').join('')
+   +'</tbody></table></div>';
+}
+function atender(p){S.plate=p;S.tab='info';nav('atender')}
+function editVeh(p,prefill){
+  const v=p?veh(p):(prefill||{});
+  modal(p?'Editar vehículo':'Nuevo vehículo',
+   '<div class="fg"><div><label class="f">Patente *</label><input class="in" id="v_p" value="'+esc(v.patente||'')+'" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em" maxlength="10"></div>'
+   +'<div><label class="f">Cliente *</label><input class="in" id="v_c" value="'+esc(v.cliente||'')+'"></div>'
+   +'<div><label class="f">Teléfono / WhatsApp</label><input class="in" id="v_t" type="tel" value="'+esc(v.telefono||'')+'" placeholder="9 1234 5678"></div>'
+   +'<div><label class="f">Correo</label><input class="in" id="v_e" type="email" value="'+esc(v.correo||'')+'"></div>'
+   +'<div><label class="f">Marca</label><input class="in" id="v_m" value="'+esc(v.marca||'')+'"></div>'
+   +'<div><label class="f">Modelo</label><input class="in" id="v_o" value="'+esc(v.modelo||'')+'"></div>'
+   +'<div><label class="f">Año</label><input class="in" id="v_a" inputmode="numeric" maxlength="4" value="'+esc(v.anio||'')+'"></div></div>',
+   '<button class="btn sec" onclick="closeModal()">Cancelar</button><button class="btn" id="v_s" onclick="saveVeh(\''+(p||'')+'\')">Guardar</button>');
+  setTimeout(()=>$(p?'v_c':'v_p').focus(),60);
+}
+async function saveVeh(orig){
+  const o={original:orig,patente:$('v_p').value,cliente:$('v_c').value,telefono:$('v_t').value,correo:$('v_e').value,marca:$('v_m').value,modelo:$('v_o').value,anio:$('v_a').value};
+  $('v_s').disabled=true;
+  const r=await run('saveVehiculo',o,'Vehículo guardado');
+  if(!r){$('v_s').disabled=false;return}
+  closeModal();const p=r.result.patente;
+  if(!orig){showQR(p,true)}
+  if(S.view==='atender'||orig)S.plate=p;
+  render();
+}
+function delVeh(p){
+  const n=hist(p).length;
+  confirmBox('¿Eliminar el vehículo <b>'+esc(p)+'</b>'+(n?' y sus <b>'+n+'</b> registros de historial':'')+'? Esta acción no se puede deshacer.',async()=>{
+    const r=await run('deleteVehiculo',{patente:p,force:true},'Vehículo eliminado');if(r){if(S.plate===p)S.plate='';render()}
+  });
+}
+
+/* =====================================================================
+   QR  (generar, descargar, imprimir, escanear)
+   ===================================================================== */
+function baseUrl(){
+  let u=cfg().URL_App||'';
+  if(!u){u=IN_GAS?(D.appUrl||''):(location.origin+location.pathname.replace(/index\.html$/,''))}
+  return u;
+}
+function qrPayload(v){const b=baseUrl();return b?b+(b.includes('?')?'&':'?')+'v='+v.qr:v.qr}
+function qrCanvas(text,size){
+  const q=qrcode(0,'M');q.addData(text);q.make();
+  const n=q.getModuleCount(),m=4,cell=Math.max(4,Math.floor(size/(n+m*2)));
+  const c=document.createElement('canvas');c.width=c.height=cell*(n+m*2);
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.fillStyle='#000';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+m)*cell,(r+m)*cell,cell,cell);
+  return c;
+}
+function labelCanvas(v){
+  const qc=qrCanvas(qrPayload(v),520),W=640,H=820;
+  const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  x.strokeStyle='#0f172a';x.lineWidth=6;x.strokeRect(10,10,W-20,H-20);
+  x.fillStyle='#0f172a';x.font='800 34px Inter,Arial';x.textAlign='center';
+  x.fillText((cfg().Nombre_Taller||'Taller').slice(0,28),W/2,70);
+  x.drawImage(qc,(W-520)/2,100,520,520);
+  x.fillStyle='#fff';x.strokeStyle='#111';x.lineWidth=6;
+  x.beginPath();x.roundRect?x.roundRect(120,650,400,90,14):x.rect(120,650,400,90);x.fill();x.stroke();
+  x.fillStyle='#111';x.font='800 58px "Courier New",monospace';x.fillText(v.patente,W/2,715);
+  x.fillStyle='#64748b';x.font='600 22px Inter,Arial';x.fillText('Escanea para ver el historial · '+v.qr,W/2,785);
+  return c;
+}
+function showQR(p,isNew){
+  const v=veh(p);if(!v)return;
+  const lc=labelCanvas(v);window._lc=lc;
+  modal((isNew?'✅ Vehículo creado · ':'')+'Código QR',
+   '<div style="text-align:center"><img src="'+lc.toDataURL()+'" style="width:100%;max-width:300px;border-radius:10px;border:1px solid var(--bd)"><p class="mu" style="margin-top:10px;font-size:12px">Imprímelo y pégalo en el parabrisas o entrégalo al cliente.<br>Al escanearlo se abre este vehículo directamente.</p>'
+   +(baseUrl()?'':'<p style="margin-top:8px;color:var(--bad);font-size:12px">⚠ Aún no hay URL de la app. Ve a Configuración → URL de la aplicación.</p>')+'</div>',
+   '<button class="btn sec" onclick="dlQR(\''+p+'\')">'+ico('dl')+'Descargar</button><button class="btn" onclick="printQR(\''+p+'\')">'+ico('print')+'Imprimir</button>');
+}
+function dlQR(p){const a=document.createElement('a');a.href=window._lc.toDataURL('image/png');a.download='QR-'+p+'.png';a.click()}
+function printQR(p){
+  const w=window.open('','_blank');if(!w){toast('Permite ventanas emergentes para imprimir','er');return}
+  w.document.write('<html><head><title>QR '+p+'</title><style>body{margin:0;display:grid;place-items:center;height:100vh}img{width:9cm}@page{margin:1cm}</style></head><body><img src="'+window._lc.toDataURL()+'" onload="setTimeout(()=>{print()},200)"></body></html>');
+  w.document.close();
+}
+
+/* --- Escaneo --- */
+let scanStream=null,scanRaf=0,scanDet=null;
+function openScan(){
+  modal('Escanear código QR',
+   '<div class="scan"><video id="sv" playsinline muted></video></div><p class="mu" id="smsg" style="text-align:center;margin:10px 0;font-size:12px">Apunta la cámara al QR del vehículo</p>'
+   +'<div style="display:flex;gap:8px"><input class="in" id="manual" placeholder="…o escribe la patente" style="text-transform:uppercase" onkeydown="if(event.key===\'Enter\')manualGo()"><button class="btn" onclick="manualGo()">Buscar</button></div>');
+  startScan();
+}
+function manualGo(){const v=$('manual').value;if(v){closeModal();resolveScan(v)}}
+async function startScan(){
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    const v=$('sv');v.srcObject=scanStream;await v.play();
+    if('BarcodeDetector' in window){try{scanDet=new BarcodeDetector({formats:['qr_code']})}catch(e){scanDet=null}}
+    const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
+    const tick=async()=>{
+      if(!$('sv'))return;
+      if(v.readyState>=2){
+        let val='';
+        try{
+          if(scanDet){const r=await scanDet.detect(v);if(r.length)val=r[0].rawValue}
+          else if(window.jsQR){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);const im=cx.getImageData(0,0,cv.width,cv.height);const r=jsQR(im.data,im.width,im.height);if(r)val=r.data}
+        }catch(e){}
+        if(val){closeModal();if(navigator.vibrate)navigator.vibrate(60);resolveScan(val);return}
+      }
+      scanRaf=requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(e){
+    const m=$('smsg');if(m)m.innerHTML='<span style="color:var(--bad)">No se pudo abrir la cámara ('+esc(e.name||'error')+'). Revisa el permiso del navegador o busca por patente.</span>';
+    const s=document.querySelector('.scan');if(s)s.classList.add('hide');
+  }
+}
+function stopScan(){cancelAnimationFrame(scanRaf);if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null}}
+function resolveScan(raw,silent){
+  raw=String(raw||'').trim();let id=raw;
+  const m=/[?&]v=([A-Za-z0-9\-]+)/.exec(raw);if(m)id=m[1];
+  const v=D.vehiculos.find(x=>x.qr.toUpperCase()===id.toUpperCase())||D.vehiculos.find(x=>x.patente===normP(id));
+  if(v){atender(v.patente);toast('Vehículo '+v.patente+' · '+v.cliente,'ok');return}
+  const pl=normP(id);
+  if(/^QR-/i.test(id)){toast('Ese QR no está registrado en este taller','er');nav('atender');return}
+  confirmBox('No existe un vehículo con la patente <b>'+esc(pl)+'</b>. ¿Quieres registrarlo ahora?',()=>editVeh('',{patente:pl}),'Registrar');
+  if(silent)nav('dash');
+}
+
+/* =====================================================================
+   ATENCIÓN (3 módulos: Información · Historial · Registro)
+   ===================================================================== */
+function picker(id,onpick){
+  return '<div style="position:relative"><input class="in" id="'+id+'" autocomplete="off" placeholder="Buscar por patente o cliente…" oninput="pick(this,\''+onpick+'\')" onfocus="pick(this,\''+onpick+'\')"><div id="'+id+'_s" class="sugg hide"></div></div>';
+}
+function pick(inp,fn){
+  const q=inp.value.toLowerCase().trim(),box=$(inp.id+'_s');
+  const L=D.vehiculos.filter(v=>!q||(v.patente+' '+v.cliente).toLowerCase().includes(q)).slice(0,8);
+  box.classList.remove('hide');
+  box.innerHTML=L.length?L.map(v=>'<div onmousedown="'+fn+'(\''+v.patente+'\')"><span class="plate sm">'+esc(v.patente)+'</span><span class="b">'+esc(v.cliente)+'</span><span class="mu" style="margin-left:auto;font-size:11px">'+esc([v.marca,v.modelo].filter(Boolean).join(' '))+'</span></div>').join(''):'<div class="mu">Sin resultados</div>';
+  inp.onblur=()=>setTimeout(()=>box.classList.add('hide'),150);
+}
+function vAtender(){
+  const v=veh(S.plate);
+  if(!v)return '<div class="card" style="max-width:640px;margin:20px auto;text-align:center;padding:36px 24px"><div style="width:84px;height:84px;border-radius:24px;background:color-mix(in srgb,var(--ac) 14%,#fff);color:var(--ac);display:grid;place-items:center;margin:0 auto 14px">'+ico('scan',44)+'</div><h2 style="font-size:20px">Escanea el QR del vehículo</h2><p class="mu" style="margin:6px 0 18px">Al escanear se activan los módulos de Información, Historial y Registro.</p><button class="btn" onclick="openScan()" style="padding:13px 26px">'+ico('scan')+'Abrir cámara</button><div style="margin:22px 0 10px" class="mu">— o busca manualmente —</div>'+picker('ap','atender')+'<div style="margin-top:14px"><button class="btn sec sm" onclick="editVeh()">'+ico('plus',16)+'Registrar vehículo nuevo</button></div></div>';
+  const H=hist(v.patente),nb=nextBenefit(v.visitas);
+  const tabs=[['info','info','Información'],['hist','clock','Historial ('+H.length+')'],['reg','plus','Registrar trabajo']];
+  const pr=nb?((v.visitas%nb.cada)/nb.cada*100):0;
+  return '<div class="card hero" style="margin-bottom:16px"><div class="plate">'+esc(v.patente)+'</div><div style="flex:1;min-width:180px"><div style="font-size:19px;font-weight:800">'+esc(v.cliente)+'</div><div class="mu">'+esc([v.marca,v.modelo,v.anio].filter(Boolean).join(' ')||'Sin datos del vehículo')+'</div></div>'
+   +(nb?'<div style="min-width:200px;flex:1;max-width:300px"><div style="font-size:12px;display:flex;justify-content:space-between;margin-bottom:6px"><span>'+ico('gift',14)+' Fidelidad</span><b>'+v.visitas+(v.visitas===1?' visita':' visitas')+'</b></div><div class="prog" style="background:#ffffff26"><i style="width:'+Math.max(4,pr)+'%"></i></div><div class="mu" style="font-size:11px;margin-top:5px">'+(nb.falta===1?'🎉 ¡Su próxima visita tiene beneficio!':'Faltan '+nb.falta+' visitas para: '+esc(nb.regla.desc||'beneficio'))+'</div></div>':'')
+   +'<div style="display:flex;gap:6px"><button class="btn sm sec" onclick="showQR(\''+v.patente+'\')">'+ico('qr',16)+'QR</button><button class="btn sm sec" onclick="editVeh(\''+v.patente+'\')">'+ico('edit',16)+'</button><button class="btn sm sec" onclick="S.plate=\'\';render()">'+ico('x',16)+'</button></div></div>'
+   +'<div class="tabs" style="margin-bottom:16px">'+tabs.map(t=>'<button class="'+(S.tab===t[0]?'on':'')+'" onclick="S.tab=\''+t[0]+'\';render()">'+ico(t[1],17)+t[2]+'</button>').join('')+'</div>'
+   +(S.tab==='info'?tInfo(v,H):S.tab==='hist'?tHist(v,H):tReg(v,H));
+}
+function tInfo(v,H){
+  const last=H[0];
+  const fono=v.telefono?'<a class="btn sm sec" href="tel:'+esc(v.telefono)+'">'+ico('phone',15)+esc(v.telefono)+'</a>':'';
+  return '<div class="grid g12"><div class="card"><h3>Último servicio</h3>'
+   +(last?'<div class="mu" style="font-size:12px">'+fdate(last.fecha)+(last.km?' · '+Number(last.km).toLocaleString('es-CL')+' km':'')+'</div><div style="font-size:16px;font-weight:700;margin:6px 0">'+esc(last.detalle)+'</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><span class="tag gr">'+ico('user',13)+esc(last.mecanico)+'</span><span class="tag '+(last.estado==='Pagada'?'ok':'wn')+'">'+esc(last.estado)+'</span><span class="tag ac">'+money(last.total)+'</span></div>'+(last.notas?'<p class="mu" style="margin-top:10px;font-size:12px">📝 '+esc(last.notas)+'</p>':''):'<div class="empty">Este vehículo aún no tiene servicios.<br><button class="btn sm" style="margin-top:10px" onclick="S.tab=\'reg\';render()">Registrar el primero</button></div>')
+   +'<h3 style="margin-top:20px">Contacto</h3><div style="display:flex;gap:8px;flex-wrap:wrap">'+fono+(v.correo?'<span class="tag gr">'+ico('mail',13)+esc(v.correo)+'</span>':'')+(!v.telefono&&!v.correo?'<span class="mu">Sin datos de contacto</span>':'')+'</div>'
+   +'<div style="display:flex;gap:10px;margin-top:20px"><div class="card" style="flex:1;padding:12px;text-align:center;box-shadow:none"><div class="kpi" style="justify-content:center"><div><div class="v">'+v.visitas+'</div><div class="l">Visitas</div></div></div></div><div class="card" style="flex:1;padding:12px;text-align:center;box-shadow:none"><div class="v" style="font-size:24px;font-weight:800">'+money(H.reduce((a,h)=>a+h.total,0))+'</div><div class="l mu" style="font-size:12px;font-weight:600">Total gastado</div></div></div></div>'
+   +'<div class="card"><h3>'+ico('clock',18)+' Mantenimientos realizados</h3>'
+   +(H.length?'<div class="tl">'+H.slice(0,6).map(h=>'<div class="tli"><div class="b">'+fdate(h.fecha)+'</div><div>'+esc(h.detalle)+'</div><div class="mu" style="font-size:12px">'+esc(h.mecanico)+' · '+money(h.total)+'</div></div>').join('')+'</div>'+(H.length>6?'<button class="btn sm sec" onclick="S.tab=\'hist\';render()">Ver historial completo</button>':''):'<div class="empty">Sin mantenimientos registrados</div>')
+   +'</div></div>';
+}
+function tHist(v,H){
+  if(!H.length)return '<div class="card empty">'+ico('clock',42)+'<div>Sin historial todavía</div></div>';
+  return '<div class="card"><h3>Historial completo · '+H.length+' visitas</h3><div style="overflow:auto"><table><thead><tr><th>N°</th><th>Fecha</th><th>Trabajos realizados</th><th>Atendido por</th><th class="r">Total</th><th>Estado</th><th></th></tr></thead><tbody>'
+   +H.map(h=>'<tr><td class="mu">'+esc(h.id)+'</td><td style="white-space:nowrap">'+fdate(h.fecha)+(h.km?'<div class="mu" style="font-size:11px">'+Number(h.km).toLocaleString('es-CL')+' km</div>':'')+'</td><td>'+h.items.map(i=>'<div>• '+(i.c>1?i.c+'× ':'')+esc(i.d)+' <span class="mu">'+money(i.p*i.c)+'</span></div>').join('')+(h.beneficio?'<div class="tag ac" style="margin-top:4px">'+ico('gift',12)+esc(h.beneficio)+'</div>':'')+'</td><td>'+esc(h.mecanico)+'</td><td class="r b">'+money(h.total)+'</td><td><span class="tag '+(h.estado==='Pagada'?'ok':'wn')+'">'+esc(h.estado)+'</span></td><td class="r" style="white-space:nowrap"><button class="ib" title="Boleta" onclick="S.fPlate=\''+v.patente+'\';S.fSel={\''+h.id+'\':1};nav(\'factura\')">'+ico('inv')+'</button><button class="ib" onclick="delHist(\''+h.id+'\')">'+ico('trash')+'</button></td></tr>').join('')
+   +'</tbody></table></div></div>';
+}
+function delHist(id){confirmBox('¿Eliminar el registro <b>'+esc(id)+'</b>? Se descontará una visita al vehículo.',async()=>{if(await run('deleteMantenimiento',{id:id},'Registro eliminado'))render()})}
+
+function commonJobs(){
+  const c={};D.historial.forEach(h=>h.items.forEach(i=>{const k=i.d.trim();if(!k)return;c[k]=c[k]||{n:0,p:i.p};c[k].n++;c[k].p=i.p}));
+  const arr=Object.entries(c).sort((a,b)=>b[1].n-a[1].n).slice(0,8).map(x=>({d:x[0],p:x[1].p}));
+  if(arr.length>=4)return arr;
+  return [['Cambio de aceite y filtro',0],['Revisión de frenos',0],['Alineación y balanceo',0],['Cambio de batería',0],['Scanner / diagnóstico',0],['Cambio de correa',0]].map(x=>({d:x[0],p:x[1]}));
+}
+function tReg(v,H){
+  if(!S.mec)S.mec=D.mecanicos[0]||'';if(!S.fecha)S.fecha=today();
+  const visita=v.visitas+1;
+  return '<div class="grid g21"><div class="card"><h3>'+ico('wrench',18)+' Trabajos realizados hoy · visita N° '+visita+'</h3>'
+   +'<div class="mu" style="font-size:12px;margin-bottom:8px">Toca para agregar rápido:</div><div class="sw" style="margin-bottom:14px">'+commonJobs().map((j,i)=>'<button class="chip" style="width:auto;height:auto;border-radius:99px;box-shadow:none;border:1px solid var(--bd)" onclick="addJob('+i+')">+ '+esc(j.d)+'</button>').join('')+'</div>'
+   +'<div class="row-item mu" style="font-size:11px;font-weight:700;margin-bottom:4px"><span>DESCRIPCIÓN</span><span>CANT.</span><span>PRECIO</span><span></span></div><div id="rows">'+cartRows()+'</div>'
+   +'<button class="btn sm sec" onclick="S.cart.push({d:\'\',c:1,p:0});reRows()">'+ico('plus',15)+'Agregar línea</button>'
+   +'<div class="fg" style="margin-top:18px"><div><label class="f">Atendido por *</label><select class="in" onchange="S.mec=this.value">'+(D.mecanicos.length?D.mecanicos.map(m=>'<option '+(m===S.mec?'selected':'')+'>'+esc(m)+'</option>').join(''):'<option value="">— agrega técnicos en Configuración —</option>')+'</select></div>'
+   +'<div><label class="f">Fecha</label><input class="in" type="date" value="'+S.fecha+'" onchange="S.fecha=this.value"></div>'
+   +'<div><label class="f">Kilometraje</label><input class="in" inputmode="numeric" value="'+esc(S.km)+'" oninput="S.km=this.value" placeholder="Opcional"></div>'
+   +'<div><label class="f">Notas internas</label><input class="in" value="'+esc(S.notas)+'" oninput="S.notas=this.value" placeholder="Opcional"></div></div></div>'
+   +'<div><div class="card" style="position:sticky;top:0"><h3>Resumen</h3><div id="sum"></div>'
+   +'<label style="display:flex;gap:8px;align-items:center;margin:14px 0;font-weight:600"><input type="checkbox" '+(S.pagada?'checked':'')+' onchange="S.pagada=this.checked"> Marcar como pagada</label>'
+   +'<button class="btn" style="width:100%;padding:13px" id="saveReg" onclick="saveReg()">'+ico('check')+'Guardar atención</button></div></div></div>';
+}
+function cartRows(){
+  return S.cart.map((r,i)=>'<div class="row-item"><input class="in" placeholder="Ej: Cambio de aceite 5W30" value="'+esc(r.d)+'" oninput="S.cart['+i+'].d=this.value"><input class="in" type="number" min="1" value="'+r.c+'" oninput="S.cart['+i+'].c=+this.value||1;updTotals()"><input class="in" type="number" min="0" inputmode="numeric" value="'+(r.p||'')+'" placeholder="0" oninput="S.cart['+i+'].p=+this.value||0;updTotals()"><button class="ib" onclick="rmRow('+i+')">'+ico('trash',16)+'</button></div>').join('');
+}
+function reRows(){$('rows').innerHTML=cartRows();updTotals()}
+function rmRow(i){S.cart.splice(i,1);if(!S.cart.length)S.cart.push({d:'',c:1,p:0});reRows()}
+function addJob(i){const j=commonJobs()[i];const e=S.cart.length===1&&!S.cart[0].d&&!S.cart[0].p;if(e)S.cart[0]={d:j.d,c:1,p:j.p};else S.cart.push({d:j.d,c:1,p:j.p});reRows()}
+function updTotals(){
+  const el=$('sum');if(!el)return;const v=veh(S.plate);if(!v)return;
+  const items=S.cart.filter(i=>i.d.trim());const sub=S.cart.reduce((a,i)=>a+i.c*i.p,0);
+  const visita=v.visitas+1;const b=items.length?benefitFor(visita,items,sub):null;
+  const apl=b&&S.benef;const desc=apl?Math.min(sub,b.ahorro):0;
+  el.innerHTML=(b?'<div class="benefit" style="margin-bottom:12px"><div style="font-size:26px">🎁</div><div style="flex:1"><div class="b">¡Beneficio de fidelidad!</div><div style="font-size:12px">'+esc(b.texto)+' (−'+money(b.ahorro)+')</div></div><input type="checkbox" style="width:20px;height:20px" '+(S.benef?'checked':'')+' onchange="S.benef=this.checked;updTotals()"></div>':'')
+   +'<div class="tot"><span class="mu">Subtotal</span><span>'+money(sub)+'</span></div>'+(desc?'<div class="tot" style="color:var(--ok)"><span>Descuento fidelidad</span><span>−'+money(desc)+'</span></div>':'')+'<div class="tot big"><span>Total</span><span>'+money(sub-desc)+'</span></div>';
+}
+async function saveReg(){
+  const v=veh(S.plate);const items=S.cart.filter(i=>i.d.trim());
+  if(!items.length)return toast('Agrega al menos un trabajo','er');
+  if(!S.mec)return toast('Selecciona quién atendió (agrega técnicos en Configuración)','er');
+  $('saveReg').disabled=true;
+  const r=await run('saveMantenimiento',{patente:v.patente,items:items,mecanico:S.mec,fecha:S.fecha,km:S.km,notas:S.notas,pagada:S.pagada,aplicarBeneficio:S.benef},null);
+  if(!r){$('saveReg').disabled=false;return}
+  const res=r.result;const id=res.id;
+  S.cart=[{d:'',c:1,p:0}];S.km='';S.notas='';S.pagada=false;S.benef=true;S.fecha='';S.tab='info';
+  render();
+  modal('✅ Atención registrada','<div style="text-align:center"><div style="font-size:42px">🔧</div><p class="b" style="font-size:16px;margin:6px 0">'+esc(id)+' · '+money(res.total)+'</p>'+(res.beneficio?'<p><span class="tag ac">🎁 '+esc(res.beneficio)+'</span></p>':'')+'<p class="mu">Visita N° '+res.visita+' del vehículo '+esc(v.patente)+'</p></div>',
+   '<button class="btn sec" onclick="closeModal()">Cerrar</button><button class="btn" onclick="closeModal();S.fPlate=\''+v.patente+'\';S.fSel={\''+id+'\':1};nav(\'factura\')">'+ico('inv')+'Generar boleta</button>');
+}
+
+/* =====================================================================
+   FACTURACIÓN / BOLETA
+   ===================================================================== */
+function vFactura(){
+  const v=veh(S.fPlate);
+  let h='<div class="card" style="margin-bottom:16px"><h3>1. Selecciona el vehículo</h3><div style="display:flex;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:220px">'+picker('fp','fpick')+'</div><button class="btn sec" onclick="openScan()">'+ico('scan')+'Escanear</button></div>'
+   +(v?'<div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="plate sm">'+esc(v.patente)+'</span><b>'+esc(v.cliente)+'</b><span class="mu">'+esc(v.telefono||'sin teléfono')+' · '+esc(v.correo||'sin correo')+'</span></div>':'')+'</div>';
+  if(!v){
+    const pend={};D.historial.filter(x=>x.estado!=='Pagada').forEach(x=>{pend[x.patente]=(pend[x.patente]||0)+x.total});
+    const ks=Object.keys(pend);
+    return h+'<div class="card"><h3>'+ico('alert',18)+' Pendientes de cobro</h3>'+(ks.length?'<table><tbody>'+ks.map(p=>'<tr class="click" onclick="fpick(\''+p+'\')"><td><span class="plate sm">'+esc(p)+'</span></td><td>'+esc((veh(p)||{}).cliente)+'</td><td class="r b">'+money(pend[p])+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">'+ico('check',42)+'<div>Todo al día, no hay boletas pendientes</div></div>')+'</div>';
+  }
+  const H=hist(v.patente);
+  const selIds=Object.keys(S.fSel).filter(k=>S.fSel[k]&&H.some(x=>x.id===k));
+  h+='<div class="grid g12"><div class="card"><h3>2. Trabajos a facturar<span class="sp"></span><button class="btn sm sec" onclick="selPend()">Todos los pendientes</button></h3>'
+   +(H.length?'<div style="overflow:auto"><table><tbody>'+H.map(x=>'<tr><td style="width:30px"><input type="checkbox" style="width:18px;height:18px" '+(S.fSel[x.id]?'checked':'')+' onchange="S.fSel[\''+x.id+'\']=this.checked;render()"></td><td><div class="b">'+fdate(x.fecha)+' <span class="mu" style="font-weight:500">'+esc(x.id)+'</span></div>'+x.items.map(i=>'<div style="font-size:12px">• '+(i.c>1?i.c+'× ':'')+esc(i.d)+' <span class="mu">'+money(i.c*i.p)+'</span></div>').join('')+(x.beneficio?'<span class="tag ac" style="margin-top:3px">'+ico('gift',11)+esc(x.beneficio)+'</span>':'')+'</td><td class="r b">'+money(x.total)+'<div><span class="tag '+(x.estado==='Pagada'?'ok':'wn')+'">'+esc(x.estado)+'</span></div></td></tr>').join('')+'</tbody></table></div>':'<div class="empty">Este vehículo no tiene trabajos registrados</div>')+'</div>'
+   +'<div><div class="card"><h3>3. Boleta</h3>'+(selIds.length?boletaHTML(mkBoleta(v,selIds))+boletaActions(v,selIds):'<div class="empty">Selecciona uno o más trabajos para generar la boleta</div>')+'</div></div></div>';
+  return h;
+}
+function fpick(p){S.fPlate=p;S.fSel={};hist(p).filter(x=>x.estado!=='Pagada').forEach(x=>S.fSel[x.id]=1);render()}
+function selPend(){S.fSel={};hist(S.fPlate).filter(x=>x.estado!=='Pagada').forEach(x=>S.fSel[x.id]=1);render()}
+function mkBoleta(v,ids){
+  const R=D.historial.filter(h=>ids.includes(h.id)).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const items=[];R.forEach(r=>r.items.forEach(i=>items.push({d:i.d,c:i.c,p:i.p,f:r.fecha})));
+  const benef=R.filter(r=>r.beneficio).map(r=>r.beneficio);
+  return {numero:ids.length===1?ids[0]:ids.slice().sort().join('+'),short:ids.length===1?ids[0]:R[R.length-1].id,fecha:R[R.length-1].fecha,v:v,items:items,subtotal:R.reduce((a,r)=>a+r.subtotal,0),descuento:R.reduce((a,r)=>a+r.descuento,0),total:R.reduce((a,r)=>a+r.total,0),benef:benef,mec:[...new Set(R.map(r=>r.mecanico))].join(', '),estado:R.every(r=>r.estado==='Pagada')?'Pagada':'Pendiente'};
+}
+function boletaHTML(b){
+  const c=cfg();
+  return '<div class="paper"><div style="display:flex;gap:12px;align-items:center;border-bottom:2px solid var(--tx);padding-bottom:12px;margin-bottom:12px">'+(c.Logo?'<img src="'+esc(c.Logo)+'" style="width:56px;height:56px;object-fit:contain">':'')+'<div style="flex:1"><h4>'+esc(c.Nombre_Taller)+'</h4><div class="mu" style="font-size:11px">'+[c.RUT&&'RUT '+esc(c.RUT),esc(c.Direccion),esc(c.Telefono)].filter(Boolean).join(' · ')+'</div></div><div style="text-align:right"><div class="b">BOLETA</div><div class="mu" style="font-size:11px">N° '+esc(b.numero)+'</div></div></div>'
+   +'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:12px"><div><div class="mu">Cliente</div><b>'+esc(b.v.cliente)+'</b><div>'+esc(b.v.telefono)+'</div></div><div><div class="mu">Vehículo</div><b>'+esc(b.v.patente)+'</b><div>'+esc([b.v.marca,b.v.modelo].filter(Boolean).join(' '))+'</div></div><div style="text-align:right"><div class="mu">Fecha</div><b>'+fdate(b.fecha)+'</b><div>Atendió: '+esc(b.mec)+'</div></div></div>'
+   +'<table><thead><tr><th>Detalle</th><th class="r">Cant.</th><th class="r">P. unit.</th><th class="r">Total</th></tr></thead><tbody>'+b.items.map(i=>'<tr><td>'+esc(i.d)+'</td><td class="r">'+i.c+'</td><td class="r">'+money(i.p)+'</td><td class="r">'+money(i.c*i.p)+'</td></tr>').join('')+'</tbody></table>'
+   +'<div style="margin-top:10px"><div class="tot"><span>Subtotal</span><span>'+money(b.subtotal)+'</span></div>'+(b.descuento?'<div class="tot" style="color:var(--ok)"><span>Descuento fidelidad'+(b.benef.length?' ('+esc(b.benef.join(', '))+')':'')+'</span><span>−'+money(b.descuento)+'</span></div>':'')+'<div class="tot big"><span>TOTAL</span><span>'+money(b.total)+'</span></div></div>'
+   +'<p class="mu" style="font-size:10px;margin-top:14px;white-space:pre-line">'+esc(c.Terminos_Boleta)+'</p></div>';
+}
+function boletaActions(v,ids){
+  const paid=ids.every(i=>(D.historial.find(h=>h.id===i)||{}).estado==='Pagada');
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">'
+   +'<button class="btn dk" onclick="bPDF(\'dl\')">'+ico('dl')+'Descargar PDF</button>'
+   +'<button class="btn wa" onclick="bWA()">'+ico('wa')+'WhatsApp</button>'
+   +'<button class="btn" onclick="bMail()">'+ico('mail')+'Enviar por correo</button>'
+   +'<button class="btn sec" onclick="bPDF(\'share\')">'+ico('share')+'Compartir PDF</button></div>'
+   +'<button class="btn '+(paid?'sec':'')+'" style="width:100%;margin-top:8px;'+(paid?'':'background:var(--ok)')+'" onclick="bPay('+(paid?'false':'true')+')">'+ico('check')+(paid?'Marcar como pendiente':'Marcar como pagada')+'</button>';
+}
+function curB(){const v=veh(S.fPlate);const ids=Object.keys(S.fSel).filter(k=>S.fSel[k]&&D.historial.some(h=>h.id===k));return ids.length?mkBoleta(v,ids):null}
+async function bPay(paid){const b=curB();const ids=Object.keys(S.fSel).filter(k=>S.fSel[k]);if(await run('updateEstado',{ids:ids,estado:paid?'Pagada':'Pendiente'},paid?'Marcada como pagada':'Marcada como pendiente'))render()}
+
+/* --- PDF --- */
+function buildPDF(b){
+  const c=cfg(),{jsPDF}=window.jspdf,d=new jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=16;let y=18;const ac=hex2rgb(c.Color||'#f97316');
+  const clean=s=>String(s==null?'':s).replace(/[^\x20-\x7E\u00A0-\u00FF]/g,'');
+  d.setFillColor(15,23,42);d.rect(0,0,W,34,'F');
+  let tx=M;
+  if(c.Logo){try{d.addImage(c.Logo,c.Logo.indexOf('image/png')>0?'PNG':'JPEG',M,6,22,22);tx=M+27}catch(e){}}
+  d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(17);d.text(clean(c.Nombre_Taller),tx,15);
+  d.setFont('helvetica','normal');d.setFontSize(8.5);d.setTextColor(203,213,225);
+  d.text(clean([c.RUT&&'RUT '+c.RUT,c.Direccion].filter(Boolean).join('  |  ')),tx,21);d.text(clean([c.Telefono,c.Correo].filter(Boolean).join('  |  ')),tx,26);
+  d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(14);d.text('BOLETA',W-M,15,{align:'right'});
+  d.setFontSize(9);d.setFont('helvetica','normal');d.text('N° '+clean(b.numero),W-M,21,{align:'right'});d.text(fdate(b.fecha),W-M,26,{align:'right'});
+  y=46;d.setTextColor(15,23,42);
+  d.setFillColor(241,245,249);d.roundedRect(M,y-6,W-2*M,24,2,2,'F');
+  d.setFontSize(8);d.setTextColor(100,116,139);d.text('CLIENTE',M+4,y);d.text('VEHICULO',M+92,y);
+  d.setFontSize(11);d.setTextColor(15,23,42);d.setFont('helvetica','bold');d.text(clean(b.v.cliente),M+4,y+6);d.text(clean(b.v.patente),M+92,y+6);
+  d.setFont('helvetica','normal');d.setFontSize(9);d.setTextColor(71,85,105);
+  d.text(clean([b.v.telefono,b.v.correo].filter(Boolean).join('  ')),M+4,y+12);d.text(clean([b.v.marca,b.v.modelo,b.v.anio].filter(Boolean).join(' ')+'  |  Atendio: '+b.mec),M+92,y+12);
+  y+=26;
+  const head=()=>{d.setFillColor(ac[0],ac[1],ac[2]);d.rect(M,y,W-2*M,8,'F');d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(9);d.text('DETALLE',M+3,y+5.5);d.text('CANT.',130,y+5.5,{align:'right'});d.text('P. UNIT.',158,y+5.5,{align:'right'});d.text('TOTAL',W-M-3,y+5.5,{align:'right'});y+=8};
+  head();d.setFont('helvetica','normal');d.setTextColor(15,23,42);d.setFontSize(9.5);
+  b.items.forEach((i,k)=>{
+    const lines=d.splitTextToSize(clean(i.d),100),h=Math.max(8,lines.length*4.6+3.5);
+    if(y+h>265){d.addPage();y=18;head();d.setFont('helvetica','normal');d.setTextColor(15,23,42);d.setFontSize(9.5)}
+    if(k%2)d.setFillColor(248,250,252),d.rect(M,y,W-2*M,h,'F');
+    d.text(lines,M+3,y+5.5);d.text(String(i.c),130,y+5.5,{align:'right'});d.text(clean(money(i.p)),158,y+5.5,{align:'right'});d.text(clean(money(i.c*i.p)),W-M-3,y+5.5,{align:'right'});y+=h;
+  });
+  d.setDrawColor(226,232,240);d.line(M,y,W-M,y);y+=8;
+  if(y>245){d.addPage();y=20}
+  d.setFontSize(10);d.setTextColor(71,85,105);d.text('Subtotal',130,y);d.text(clean(money(b.subtotal)),W-M-3,y,{align:'right'});
+  if(b.descuento){y+=6;d.setTextColor(22,163,74);d.text('Descuento fidelidad',130,y);d.text('-'+clean(money(b.descuento)),W-M-3,y,{align:'right'});if(b.benef.length){y+=4.5;d.setFontSize(8);d.text(clean(b.benef.join(', ')),W-M-3,y,{align:'right'})}}
+  y+=4;d.setFillColor(15,23,42);d.roundedRect(110,y,W-M-110,12,2,2,'F');d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(13);d.text('TOTAL',114,y+8);d.text(clean(money(b.total)),W-M-4,y+8,{align:'right'});
+  y+=22;d.setFont('helvetica','normal');d.setFontSize(8);d.setTextColor(100,116,139);
+  d.text(d.splitTextToSize(clean(c.Terminos_Boleta),W-2*M),M,y);
+  d.setFontSize(8);d.text('Gracias por confiar en '+clean(c.Nombre_Taller),W/2,288,{align:'center'});
+  return d;
+}
+function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(h.substr(i,2),16)||0)}
+const fname=b=>'Boleta-'+b.v.patente+'-'+b.short+'.pdf';
+async function bPDF(mode){
+  const b=curB();if(!b)return;const d=buildPDF(b);
+  if(mode==='dl'){d.save(fname(b));return}
+  const file=new File([d.output('blob')],fname(b),{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Boleta '+b.numero,text:fillMsg(cfg().Msg_WhatsApp,b)})}catch(e){}}
+  else{d.save(fname(b));toast('Este dispositivo no permite compartir archivos; se descargó el PDF','')}
+}
+function phoneIntl(t){
+  let d=String(t||'').replace(/\D/g,'');const cc=String(cfg().Codigo_Pais||'56').replace(/\D/g,'');
+  if(d.startsWith('00'))d=d.slice(2);
+  if(d.startsWith(cc)&&d.length>=cc.length+8)return d;
+  return cc+d.replace(/^0+/,'');
+}
+function detalleTxt(b){return b.items.map(i=>'• '+(i.c>1?i.c+'x ':'')+i.d+' — '+money(i.c*i.p)).join('\n')}
+function fillMsg(t,b){
+  const c=cfg(),m={cliente:b.v.cliente,taller:c.Nombre_Taller,patente:b.v.patente,fecha:fdate(b.fecha),detalle:detalleTxt(b),total:money(b.total),subtotal:money(b.subtotal),descuento:b.descuento?'-'+money(b.descuento):money(0),numero:b.numero,telefono:c.Telefono,tecnico:b.mec};
+  return String(t||'').replace(/\{(\w+)\}/g,(x,k)=>k in m?m[k]:x);
+}
+function bWA(){
+  const b=curB();if(!b)return;
+  if(!b.v.telefono)return toast('El cliente no tiene teléfono registrado','er');
+  const num=phoneIntl(b.v.telefono);
+  const url='https://wa.me/'+num+'?text='+encodeURIComponent(fillMsg(cfg().Msg_WhatsApp,b));
+  // El PDF se descarga y también se abre WhatsApp con el mensaje personalizado
+  modal('Enviar por WhatsApp','<p>Se abrirá WhatsApp con el mensaje listo para <b>'+esc(b.v.cliente)+'</b> (+'+num+').</p><p class="mu" style="margin-top:8px;font-size:12px">WhatsApp (wa.me) no permite adjuntar archivos automáticamente. Si quieres enviar el PDF también, usa <b>Compartir PDF</b> y elige WhatsApp, o adjunta el PDF descargado.</p>'
+   ,'<button class="btn sec" onclick="closeModal();bPDF(\'dl\')">'+ico('dl')+'Solo PDF</button><a class="btn wa" href="'+url+'" target="_blank" rel="noopener" onclick="closeModal()">'+ico('wa')+'Abrir WhatsApp</a>');
+}
+async function bMail(){
+  const b=curB();if(!b)return;
+  if(!b.v.correo)return toast('El cliente no tiene correo registrado','er');
+  const subj=fillMsg(cfg().Asunto_Correo,b),body=fillMsg(cfg().Msg_Correo,b);
+  const mt='mailto:'+encodeURIComponent(b.v.correo)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+  modal('Enviar por correo','<p>Para: <b>'+esc(b.v.correo)+'</b></p><div class="card" style="box-shadow:none;margin:10px 0;font-size:12px;white-space:pre-line;max-height:200px;overflow:auto"><b>'+esc(subj)+'</b>\n\n'+esc(body)+'</div><p class="mu" style="font-size:12px">«Enviar ahora» manda el correo con la boleta en PDF adjunta desde tu cuenta de Google (cuota diaria de Gmail). «Abrir mi correo» usa la app de correo de este dispositivo, sin adjunto.</p>',
+   '<a class="btn sec" href="'+mt+'" onclick="closeModal()">Abrir mi correo</a><button class="btn" id="mailgo" onclick="mailNow()">'+ico('mail')+'Enviar ahora con PDF</button>');
+}
+async function mailNow(){
+  const b=curB();if(!b)return;$('mailgo').disabled=true;
+  const pdf=buildPDF(b).output('datauristring').split(',')[1];
+  const r=await run('sendEmail',{to:b.v.correo,subject:fillMsg(cfg().Asunto_Correo,b),body:fillMsg(cfg().Msg_Correo,b),pdfBase64:pdf,filename:fname(b)},'Correo enviado a '+b.v.correo);
+  if(r)closeModal();else $('mailgo').disabled=false;
+}
+
+/* =====================================================================
+   FIDELIDAD
+   ===================================================================== */
+function vFidelidad(){
+  if(!S.rules)S.rules=D.fidelidad.map(r=>Object.assign({},r));
+  const rk=D.vehiculos.slice().sort((a,b)=>b.visitas-a.visitas).slice(0,10);
+  return '<div class="grid g2"><div class="card"><h3>'+ico('gift',18)+' Reglas de beneficio</h3><p class="mu" style="font-size:12px;margin-bottom:12px">Se aplican automáticamente cuando el número de visita es múltiplo de «cada». Si coinciden varias, se usa la más conveniente para el cliente.</p><div id="rules">'+ruleRows()+'</div>'
+   +'<div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm sec" onclick="S.rules.push({cada:3,tipo:\'DESCUENTO\',valor:10,desc:\'\',activo:true});reRules()">'+ico('plus',15)+'Agregar regla</button><span class="sp" style="flex:1"></span><button class="btn" onclick="saveRules()">Guardar reglas</button></div></div>'
+   +'<div class="card"><h3>Clientes más fieles</h3>'+(rk.length?rk.map(v=>{const nb=nextBenefit(v.visitas);return '<div style="display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9"><span class="plate sm">'+esc(v.patente)+'</span><div style="flex:1;min-width:0"><div class="b">'+esc(v.cliente)+'</div><div class="mu" style="font-size:11px">'+(nb?(nb.falta===1?'🎁 ¡Su próxima visita tiene beneficio!':'Faltan '+nb.falta+' para su beneficio'):'Sin reglas activas')+'</div></div><span class="tag ac">'+v.visitas+' visitas</span></div>'}).join(''):'<div class="empty">Sin clientes todavía</div>')+'</div></div>';
+}
+function ruleRows(){
+  if(!S.rules.length)return '<div class="empty" style="padding:16px">Sin reglas. Agrega la primera.</div>';
+  return S.rules.map((r,i)=>'<div class="card" style="box-shadow:none;padding:12px;margin-bottom:10px"><div style="display:grid;grid-template-columns:90px 1fr 90px 30px;gap:8px;align-items:end"><div><label class="f">Cada N visitas</label><input class="in" type="number" min="1" value="'+r.cada+'" oninput="S.rules['+i+'].cada=+this.value"></div><div><label class="f">Beneficio</label><select class="in" onchange="S.rules['+i+'].tipo=this.value;reRules()"><option value="DESCUENTO" '+(r.tipo==='DESCUENTO'?'selected':'')+'>Descuento %</option><option value="GRATIS" '+(r.tipo==='GRATIS'?'selected':'')+'>Mantenimiento gratis</option></select></div><div><label class="f">'+(r.tipo==='GRATIS'?'—':'% desc.')+'</label><input class="in" type="number" min="1" max="100" '+(r.tipo==='GRATIS'?'disabled value="100"':'value="'+r.valor+'"')+' oninput="S.rules['+i+'].valor=+this.value"></div><button class="ib" onclick="S.rules.splice('+i+',1);reRules()">'+ico('trash',16)+'</button></div>'
+   +'<div style="display:flex;gap:10px;align-items:center;margin-top:8px"><input class="in" placeholder="Descripción para el cliente (ej: 15% de descuento)" value="'+esc(r.desc)+'" oninput="S.rules['+i+'].desc=this.value"><label style="display:flex;gap:6px;align-items:center;font-weight:600;white-space:nowrap"><input type="checkbox" '+(r.activo?'checked':'')+' onchange="S.rules['+i+'].activo=this.checked"> Activa</label></div></div>').join('');
+}
+function reRules(){$('rules').innerHTML=ruleRows()}
+async function saveRules(){if(await run('saveFidelidad',{rules:S.rules},'Reglas guardadas')){S.rules=null;render()}}
+
+/* =====================================================================
+   CONFIGURACIÓN
+   ===================================================================== */
+const COLORS=['#f97316','#ef4444','#2563eb','#16a34a','#7c3aed','#0891b2','#db2777','#eab308'];
+function vConfig(){
+  const c=cfg();if(!S.cf)S.cf=Object.assign({},c);
+  const t=S.cfgTab;
+  const tabs=[['taller','Taller'],['tecnicos','Técnicos'],['msgs','Mensajes'],['seg','Seguridad y plan']];
+  let body='';
+  if(t==='taller')body='<div class="card"><h3>Datos del taller</h3><div class="fg">'
+   +cf('Nombre del taller','Nombre_Taller')+cf('RUT / ID fiscal','RUT')+cf('Dirección','Direccion')+cf('Teléfono','Telefono')+cf('Correo del taller','Correo')+cf('Moneda (símbolo)','Moneda')+cf('Código de país (WhatsApp)','Codigo_Pais','56')
+   +'<div class="full"><label class="f">URL de la aplicación (se usa dentro de los QR)</label><input class="in" value="'+esc(S.cf.URL_App||'')+'" oninput="S.cf.URL_App=this.value" placeholder="'+esc(baseUrl()||'https://…')+'"><div class="mu" style="font-size:11px;margin-top:4px">Déjalo vacío para usar la detectada automáticamente.</div></div>'
+   +'<div class="full"><label class="f">Términos y condiciones de la boleta</label><textarea class="in" oninput="S.cf.Terminos_Boleta=this.value">'+esc(S.cf.Terminos_Boleta||'')+'</textarea></div>'
+   +'<div class="full"><label class="f">Logo</label><div style="display:flex;gap:14px;align-items:center"><div style="width:84px;height:84px;border:1px dashed var(--bd);border-radius:14px;display:grid;place-items:center;overflow:hidden;background:#f8fafc" id="lgp">'+(S.cf.Logo?'<img src="'+esc(S.cf.Logo)+'" style="max-width:100%;max-height:100%">':'<span class="mu">Sin logo</span>')+'</div><div><input type="file" id="lgf" accept="image/*" class="hide" onchange="upLogo(this)"><button class="btn sec sm" onclick="$(\'lgf\').click()">Subir logo</button> <button class="btn bad sm" onclick="S.cf.Logo=\'\';render()">Quitar</button><div class="mu" style="font-size:11px;margin-top:6px">Se optimiza automáticamente.</div></div></div></div>'
+   +'<div class="full"><label class="f">Color de la marca</label><div class="sw">'+COLORS.map(x=>'<button style="background:'+x+'" class="'+(S.cf.Color===x?'on':'')+'" onclick="S.cf.Color=\''+x+'\';document.documentElement.style.setProperty(\'--ac\',\''+x+'\');render()"></button>').join('')+'</div></div></div>'
+   +'<div style="margin-top:16px;text-align:right"><button class="btn" onclick="saveCfg()">Guardar cambios</button></div></div>';
+  if(t==='tecnicos')body='<div class="card" style="max-width:560px"><h3>'+ico('user',18)+' Técnicos / mecánicos</h3><div style="display:flex;gap:8px;margin-bottom:14px"><input class="in" id="nm" placeholder="Nombre del técnico" onkeydown="if(event.key===\'Enter\')addMec()"><button class="btn" onclick="addMec()">'+ico('plus')+'Agregar</button></div>'
+   +(D.mecanicos.length?D.mecanicos.map((m,i)=>'<div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9"><div style="width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--ac) 16%,#fff);color:var(--ac);display:grid;place-items:center;font-weight:800">'+esc(initials(m))+'</div><b style="flex:1">'+esc(m)+'</b><button class="ib" onclick="delMec('+i+')">'+ico('trash',17)+'</button></div>').join(''):'<div class="empty">Aún no hay técnicos</div>')+'</div>';
+  if(t==='msgs')body='<div class="card"><h3>Mensajes personalizados</h3><p class="mu" style="font-size:12px;margin-bottom:12px">Variables: <code>{cliente} {taller} {patente} {fecha} {detalle} {subtotal} {descuento} {total} {numero} {telefono} {tecnico}</code>. El nombre, teléfono y correo se toman siempre de la ficha del cliente.</p><div class="fg"><div class="full"><label class="f">Mensaje de WhatsApp</label><textarea class="in" rows="7" oninput="S.cf.Msg_WhatsApp=this.value">'+esc(S.cf.Msg_WhatsApp||'')+'</textarea></div><div class="full"><label class="f">Asunto del correo</label><input class="in" value="'+esc(S.cf.Asunto_Correo||'')+'" oninput="S.cf.Asunto_Correo=this.value"></div><div class="full"><label class="f">Cuerpo del correo</label><textarea class="in" rows="8" oninput="S.cf.Msg_Correo=this.value">'+esc(S.cf.Msg_Correo||'')+'</textarea></div></div><div style="margin-top:16px;text-align:right"><button class="btn" onclick="saveCfg()">Guardar mensajes</button></div></div>';
+  if(t==='seg')body='<div class="grid g2"><div class="card"><h3>Cambiar PIN de acceso</h3><label class="f">Nuevo PIN (mín. 4 caracteres)</label><input class="in" id="np" type="password" inputmode="numeric"><div style="margin-top:12px"><button class="btn" onclick="chPin()">Actualizar PIN</button></div></div>'
+   +'<div class="card"><h3>Suscripción</h3><div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><span class="tag ac" style="font-size:13px">Plan '+esc(c.Plan||'Gratis')+'</span></div><p class="mu" style="font-size:12px">'+(c.Vencimiento?'Vence: '+fdate(c.Vencimiento):'Sin fecha de vencimiento.')+' El módulo de suscripción queda preparado: se controla con las filas <code>Plan</code> y <code>Vencimiento</code> de la hoja Configuracion.</p></div></div>';
+  return '<div class="tabs" style="margin-bottom:16px">'+tabs.map(x=>'<button class="'+(t===x[0]?'on':'')+'" onclick="S.cfgTab=\''+x[0]+'\';render()">'+x[1]+'</button>').join('')+'</div>'+body;
+}
+function cf(l,k,ph){return '<div><label class="f">'+l+'</label><input class="in" value="'+esc(S.cf[k]||'')+'" placeholder="'+esc(ph||'')+'" oninput="S.cf.'+k+'=this.value"></div>'}
+function upLogo(inp){
+  const f=inp.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{const im=new Image();im.onload=()=>{
+    const mx=220,s=Math.min(1,mx/Math.max(im.width,im.height));const cv=document.createElement('canvas');cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);
+    const x=cv.getContext('2d');x.drawImage(im,0,0,cv.width,cv.height);
+    let u=cv.toDataURL('image/png');if(u.length>45000){x.globalCompositeOperation='destination-over';x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);u=cv.toDataURL('image/jpeg',.82)}
+    if(u.length>47000)return toast('El logo es muy pesado, prueba con otra imagen','er');
+    S.cf.Logo=u;render()};im.src=rd.result};rd.readAsDataURL(f);
+}
+async function saveCfg(){if(await run('saveConfig',{values:S.cf},'Configuración guardada')){S.cf=null;render()}}
+async function addMec(){const n=$('nm').value.trim();if(!n)return;if(await run('addMecanico',{nombre:n},'Técnico agregado'))render()}
+function delMec(i){const n=D.mecanicos[i];confirmBox('¿Quitar a <b>'+esc(n)+'</b> del listado? Su historial se mantiene.',async()=>{if(await run('removeMecanico',{nombre:n},'Técnico eliminado'))render()})}
+async function chPin(){const n=$('np').value;const r=await run('changePin',{nuevo:n},'PIN actualizado');if(r){PIN=n;ssSet('tp_pin',n);$('np').value=''}}
+</script>
+</body>
+</html>
